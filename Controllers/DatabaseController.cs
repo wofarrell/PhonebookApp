@@ -26,13 +26,13 @@ internal class DatabaseController
                 Console.WriteLine($"{b.FirstName}");
                 Console.WriteLine($"{b.LastName}");
                 Console.WriteLine($"{b.Email}");
-                
+
                 var PhoneNumber = await db.PhoneNumbers
                     .SingleAsync(c => c.ContactId == b.ContactId);
 
                 Console.WriteLine($"{PhoneNumber.TenDigitNumber}");
                 Console.WriteLine($"{PhoneNumber.Location}");
-           
+
             }
 
 
@@ -75,7 +75,7 @@ internal class DatabaseController
         }
     }
 
-    public async void UpdateContact()
+    public async void UpdateContact(string firstname = "", string lastname = "")
     {
         using var db = new PhonebookContext();
         var Contact = await db.Contacts
@@ -89,11 +89,20 @@ internal class DatabaseController
 
     }
 
-    public void DeleteContact()
+    public async void DeleteContact()
     {
-        using var db = new PhonebookContext();
+        using (var db = new PhonebookContext())
+        {
+            //First filter the results by input, which is going to be a string this time.
+            var Contact = await db.Contacts
+                        .Where(b => b.LastName.Contains("Bombadil"))
+                        .OrderBy(b => b.ContactId)
+                        .FirstAsync();
 
-        Console.WriteLine("Delete the blog");
+            db.Remove(Contact);
+            db.SaveChanges();
+        }
+        Console.WriteLine("Deleted the blog");
         //db.Remove();
         //await db.SaveChangesAsync();
     }

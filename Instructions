@@ -15,3 +15,9 @@ You should use Code-First Approach, which means
 EF will create the database schema for you.
 
 You should use SQL Server, not SQLite
+
+
+--------------
+
+start up localdb using 
+"sqllocaldb start MSSQLLocalDB"      

@@ -88,12 +88,12 @@ internal class UserInterface
 
     internal void UpdateContact()
     {
-
+       databaseController.UpdateContact();
     }
 
     internal void DeleteContact()
     {
-
+        databaseController.DeleteContact();
     }
     
 
