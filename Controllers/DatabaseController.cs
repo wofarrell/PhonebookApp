@@ -8,20 +8,23 @@ namespace Controllers;
 
 internal class DatabaseController
 {
-
     public async void ViewContacts()
     {
-
         using (var db = new PhonebookContext())
         {
-
             Console.WriteLine("Querying for a Contact");
             var Contact = await db.Contacts
                 .OrderBy(b => b.ContactId)
                 .ToListAsync();
 
             foreach (var b in Contact)
-            {
+            {   
+                var PhoneNumber = await db.PhoneNumbers
+                    .SingleAsync(c => c.ContactId == b.ContactId);
+
+                Console.WriteLine($"| {b.ContactId} | "+$"{b.FirstName} | "+$"{b.LastName} | "+ $"{b.Email} | "+$"{PhoneNumber.TenDigitNumber} | "+$"{PhoneNumber.Location} | \n");
+                
+                /*
                 Console.WriteLine($"{b.ContactId}");
                 Console.WriteLine($"{b.FirstName}");
                 Console.WriteLine($"{b.LastName}");
@@ -32,11 +35,8 @@ internal class DatabaseController
 
                 Console.WriteLine($"{PhoneNumber.TenDigitNumber}");
                 Console.WriteLine($"{PhoneNumber.Location}");
-
+                */
             }
-
-
-
         }
     }
 
@@ -75,7 +75,7 @@ internal class DatabaseController
         }
     }
 
-    public async void UpdateContact(string firstname = "", string lastname = "")
+    public async void UpdateContact(string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0, string location = "")
     {
         using var db = new PhonebookContext();
         var Contact = await db.Contacts
@@ -89,7 +89,7 @@ internal class DatabaseController
 
     }
 
-    public async void DeleteContact()
+    public async void DeleteContact(string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0)
     {
         using (var db = new PhonebookContext())
         {
