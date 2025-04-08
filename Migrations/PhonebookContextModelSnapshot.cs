@@ -61,8 +61,8 @@ namespace PhoneBookApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("tenDigitNumber")
-                        .HasColumnType("int");
+                    b.Property<long>("TenDigitNumber")
+                        .HasColumnType("bigint");
 
                     b.HasKey("PhoneNumberId");
 

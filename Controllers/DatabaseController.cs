@@ -38,9 +38,10 @@ internal class DatabaseController
                 */
             }
         }
+
     }
 
-    public async Task AddContact(string firstname, string lastname, string email, int tendigitnumber, string location)
+    public async Task AddContact(string firstname, string lastname, string email, long tendigitnumber, string location)
     {
         //This takes in the information that will be popualted in table dbo.Contacts and table dbo.PhoneNumbers
         using (var db = new PhonebookContext())
@@ -75,13 +76,13 @@ internal class DatabaseController
         }
     }
 
-    public async Task UpdateContact(int contactid, string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0, string location = "")
+    public async Task UpdateContact(int contactid, string firstname = "", string lastname = "", string email = "", long tendigitnumber = 0, string location = "")
     {
         using (var db = new PhonebookContext())
         {
             var Contact = await db.Contacts
                 .SingleOrDefaultAsync(b => b.ContactId == contactid);
-            Console.WriteLine("Current contact information");
+            Console.WriteLine("Current contact information\n");
             //writes all contact info to console
 
             var PhoneNumber = await db.PhoneNumbers
@@ -113,24 +114,25 @@ internal class DatabaseController
                 Console.WriteLine("No phone number found for this contact. Cannot update.");
             }
             await db.SaveChangesAsync();
+
+            Console.WriteLine("Updated Contact below:");
+            Console.WriteLine($"| {Contact.ContactId} | " + $"{Contact.FirstName} | " + $"{Contact.LastName} | " + $"{Contact.Email} | " + $"{PhoneNumber.TenDigitNumber} | " + $"{PhoneNumber.Location} | \n");
+
         }
     }
-    
 
-    public async void DeleteContact(string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0)
+
+    public async Task DeleteContact(int contactid, string firstname = "", string lastname = "", string email = "", long tendigitnumber = 0)
     {
         using (var db = new PhonebookContext())
         {
             //First filter the results by input, which is going to be a string this time.
             var Contact = await db.Contacts
-                        .Where(b => b.LastName.Contains(lastname))
-                        .OrderBy(b => b.ContactId)
-                        .FirstAsync();
-
+                        .SingleAsync(c => c.ContactId == contactid);
             db.Remove(Contact);
             db.SaveChanges();
         }
-        Console.WriteLine("Deleted the blog");
+        Console.WriteLine("Deleted the contact");
         //db.Remove();
         //await db.SaveChangesAsync();
     }

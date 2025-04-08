@@ -31,7 +31,7 @@ namespace PhoneBookApp.Migrations
                 {
                     PhoneNumberId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    tenDigitNumber = table.Column<int>(type: "int", nullable: false),
+                    TenDigitNumber = table.Column<long>(type: "bigint", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactId = table.Column<int>(type: "int", nullable: false)
                 },

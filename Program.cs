@@ -17,7 +17,7 @@ class Program
 
             
         UserInterface userInterface = new();
-        userInterface.MainMenu();
+        await userInterface.MainMenu();
         
         Console.WriteLine("Commands finished, check DB");
     }

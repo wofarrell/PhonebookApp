@@ -2,6 +2,7 @@ using Controllers;
 using Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Threading.Tasks;
 
 
 namespace PhoneBookApp;
@@ -12,19 +13,22 @@ internal class UserInterface
     DatabaseController databaseController = new();
 
 
-    internal void MainMenu()
+    internal async Task MainMenu()
     {
+
 
         bool menuBool = true;
         while (menuBool)
         {
+
+            bool validEntry = false;
+            string menuchoice = "";
             //Console.Clear();
             Console.WriteLine("Phonebook Console App");
             Console.WriteLine("Please make a selection by number");
 
             Console.WriteLine("1. View Contacts \n2. Add a Contact \n3. Update a Contact \n4. Delete Contact \n'exit'");
-            bool validEntry = false;
-            string menuchoice = "";
+
             string? inputChoice = "";
             do
             {
@@ -43,24 +47,22 @@ internal class UserInterface
                 }
             } while (validEntry == false);
 
-
             switch (menuchoice)
             {
-
                 case "1": //Manage flashcard stacks
-                    ViewContacts();
+                    await ViewContacts();
                     break;
 
                 case "2": //Manage flashcards
-                    AddContact();
+                    await AddContact();
                     break;
 
                 case "3":  //Start a study session                 
-                    UpdateContact();
+                    await UpdateContact();
                     break;
 
                 case "4": //View study sessions
-                    DeleteContact();
+                    await DeleteContact();
                     break;
 
                 case "exit": //exit
@@ -71,17 +73,20 @@ internal class UserInterface
     }
 
 
-    internal void ViewContacts()
+    internal async Task ViewContacts()
     {
-        databaseController.ViewContacts();
+        await databaseController.ViewContacts();
+        Console.WriteLine("Press any key to return to the Main Menu.");
+        //await Task.Delay(2000);
+        Console.ReadLine();
     }
 
-    internal void AddContact()
+    internal async Task AddContact()
     {
         string firstname = "";
         string lastname = "";
         string email = "";
-        int tendigitnumber = 0123456789;
+        long tendigitnumber = 0123456789;
         string location = "";
 
         Console.WriteLine("Adding a Contact Requires a First Name, Last Name, Email, and Phone Number. If at any point you want to quit this process, type 'exit'.");
@@ -177,7 +182,7 @@ internal class UserInterface
         {
             Console.WriteLine("Enter a ten digit phone number as one integer");
             phoneStr = Console.ReadLine();
-            bool VariableEntry = int.TryParse(phoneStr, out int phoneInt);
+            bool VariableEntry = long.TryParse(phoneStr, out long phoneInt);
             if (phoneStr != null && phoneStr.Length == 10 && VariableEntry == true && phoneStr.IndexOf("0") != 0)
             {
                 if (phoneInt != 0)
@@ -232,30 +237,29 @@ internal class UserInterface
         string firstname = "Tom";
         string lastname = "Bombadil";
         string email = "tommy@gmail.com";
-        int tendigitnumber = 0123456789;
+        long tendigitnumber = 0123456789;
         string location = "Home";
          */
 
-        databaseController.AddContact(firstname, lastname, email, tendigitnumber, location);
+        await databaseController.AddContact(firstname, lastname, email, tendigitnumber, location);
 
     }
 
-    internal void UpdateContact()
+    internal async Task UpdateContact()
     {
         bool exitBool = false;
 
-        databaseController.ViewContacts();
-
-
+        await databaseController.ViewContacts();
 
         int contactid = 0;
         string firstname = "";
         string lastname = "";
         string email = "";
-        int tendigitnumber = 0;
+        long tendigitnumber = 0;
         string location = "";
 
-
+        while (exitBool == false)
+        {
         //get contact ID - need to rewrite to call the db to ensure it exists
         Console.WriteLine("\nChoose a contact by number from the list above to update, or type 'exit'");
         string? contactStr = "";
@@ -264,7 +268,7 @@ internal class UserInterface
         {
             contactStr = Console.ReadLine();
             bool VariableEntry = int.TryParse(contactStr, out int contactInt);
-            if (contactStr != null && contactStr.Length <= 2 && VariableEntry == true && contactStr.IndexOf("0") != 0)
+            if (contactStr != null && VariableEntry == true && contactStr.IndexOf("0") != 0)
             {
                 if (contactInt != 0)
                 {
@@ -276,7 +280,7 @@ internal class UserInterface
                     Console.WriteLine("\nplease enter a valid cotnactid");
                 }
             }
-            if (contactStr == null || contactStr.Length > 2 || VariableEntry != true && contactStr.IndexOf("0") == 0)
+            if (contactStr == null || VariableEntry != true && contactStr.IndexOf("0") == 0)
             {
                 Console.WriteLine("\nplease enter a valid contactid");
             }
@@ -289,18 +293,13 @@ internal class UserInterface
 
         } while (contactSelectBool == false);
 
-        if (exitBool == true)
-        {
-            return;
-        }
-
         Console.WriteLine("Choose the number of the field of the contact that you want to update below, and choose 'Update' to update the contact:");
 
 
         bool updateMenuBool = false;
         while (updateMenuBool == false)
         {
-            Console.WriteLine("1. First Name \n2. Last Name \n3. Email \n4. Phone Number \n5. Update Contact \n'exit'");
+            Console.WriteLine("1. First Name \n2. Last Name \n3. Email \n4. Phone Number \n5. Location \n6. Run Update Command \n'exit'");
             bool validEntry = false;
             string menuchoice = "";
             string? inputChoice = "";
@@ -308,9 +307,8 @@ internal class UserInterface
             {
                 inputChoice = Console.ReadLine();
                 {
-                    if (inputChoice != null && (inputChoice == "1" || inputChoice == "2" || inputChoice == "3" || inputChoice == "4" || inputChoice == "5" || inputChoice == "exit"))
+                    if (inputChoice != null && (inputChoice == "1" || inputChoice == "2" || inputChoice == "3" || inputChoice == "4" || inputChoice == "5" || inputChoice == "6" || inputChoice == "exit"))
                     {
-                        //if (inputChoice == "1" || inputChoice == "2" || inputChoice == "3" || inputChoice == "4")
                         menuchoice = inputChoice;
                         validEntry = true;
                     }
@@ -413,7 +411,6 @@ internal class UserInterface
                     } while (emailSelectBool == false);
                     break;
 
-
                 case "4": //Get value to update phone number to 
                     string? phoneStr = "";
                     bool phoneSelectBool = false;
@@ -421,7 +418,7 @@ internal class UserInterface
                     {
                         Console.WriteLine("Enter a ten digit phone number as one integer");
                         phoneStr = Console.ReadLine();
-                        bool VariableEntry = int.TryParse(phoneStr, out int phoneInt);
+                        bool VariableEntry = long.TryParse(phoneStr, out long phoneInt);
                         if (phoneStr != null && phoneStr.Length == 10 && VariableEntry == true && phoneStr.IndexOf("0") != 0)
                         {
                             if (phoneInt != 0)
@@ -473,29 +470,70 @@ internal class UserInterface
                     break;
 
                 case "6": //exit loop to update the contact
-                    updateMenuBool = false;
+                    updateMenuBool = true;
                     break;
 
                 case "exit": //exit
-                    updateMenuBool = false;
+                    updateMenuBool = true;
+                    exitBool = true;
                     break;
             }
         }
 
-        if (exitBool == true)
-        {
-            return;
+        //PARAMS (contactId, string firstname = "", string lastname = "", string email = "", long tendigitnumber = 0)
+        await databaseController.UpdateContact(contactid, firstname, lastname, email, tendigitnumber, location);
+        exitBool = true;
+        Console.WriteLine("Press any key to return to the Main Menu.");
+        Console.ReadLine();
         }
-
-        //PARAMS (contactId, string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0)
-        databaseController.UpdateContact(contactid, firstname, lastname, email, tendigitnumber, location);
     }
 
-    internal void DeleteContact()
+    internal async Task DeleteContact()
     {
-        databaseController.ViewContacts();
-        //PARAMS (string firstname = "", string lastname = "", string email = "", int tendigitnumber = 0)
-        databaseController.DeleteContact();
+        await databaseController.ViewContacts();
+        //PARAMS (string firstname = "", string lastname = "", string email = "", long tendigitnumber = 0)
+        
+        
+        bool exitBool = false;
+        int contactid = 0;
+
+        while (exitBool == false)
+        {
+        
+        string? contactStr = "";
+        bool contactSelectBool = false;
+        do
+        {
+            Console.WriteLine("\nChoose a contact by number from the list above to update, or type 'exit'");
+            contactStr = Console.ReadLine();
+            bool VariableEntry = int.TryParse(contactStr, out int contactInt);
+            if (contactStr != null && VariableEntry == true && contactStr.IndexOf("0") != 0)
+            {
+                if (contactInt != 0)
+                {
+                    contactid = contactInt;
+                    contactSelectBool = true;
+                    exitBool = true;
+                }
+                else
+                {
+                    Console.WriteLine("\nplease enter a valid cotnactid");
+                }
+            }
+            if (contactStr == null || VariableEntry != true && contactStr.IndexOf("0") == 0)
+            {
+                Console.WriteLine("\nplease enter a valid contactid");
+            }
+            if (contactStr == "exit")
+            {
+                Console.WriteLine("\nexiting to Main Menu");
+                exitBool = true;
+                break;
+            }
+
+        } while (contactSelectBool == false);
+        }
+        await databaseController.DeleteContact(contactid);
     }
 
 }

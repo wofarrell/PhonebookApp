@@ -11,7 +11,7 @@ using Models;
 namespace PhoneBookApp.Migrations
 {
     [DbContext(typeof(PhonebookContext))]
-    [Migration("20250331080916_InitialCreate")]
+    [Migration("20250408064423_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -64,8 +64,8 @@ namespace PhoneBookApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("tenDigitNumber")
-                        .HasColumnType("int");
+                    b.Property<long>("TenDigitNumber")
+                        .HasColumnType("bigint");
 
                     b.HasKey("PhoneNumberId");
 
